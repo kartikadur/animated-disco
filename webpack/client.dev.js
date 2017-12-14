@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractCssChunks = require('extract-css-chunks-webpack-plugin');
+const WriteFilePlugin = require('write-file-webpack-plugin');
 
 module.exports = {
   name: 'client',
@@ -20,8 +21,12 @@ module.exports = {
       }
     ]
   },
-  devtool: 'eval',
-  entry: path.resolve(__dirname, '../src/index.js'),
+  devtool: 'source-map',
+  entry: [
+    'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=false&quiet=false&noInfo=false',
+    'react-hot-loader/patch',
+    path.resolve(__dirname, '../src/index.js')
+  ],
   output: {
     filename: '[name].js',
     chunkFilename: '[name].js',
@@ -29,11 +34,18 @@ module.exports = {
     publicPath: '/static/'
   },
   plugins: [
+    new WriteFilePlugin(),
     new ExtractCssChunks(),
     new webpack.optimize.CommonsChunkPlugin({
       names: ['bootstrap'],
       filename: '[name].js',
       minChunks: Infinity
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('development')
+      }
     })
   ]
 };

@@ -1,8 +1,9 @@
 import React from 'react';
+import universal from 'react-universal-component';
 
-const HomeTab = () => <div>Home</div>;
-const FooTab = () => <div>Foo</div>;
-const BarTab = () => <div>Bar</div>;
+const UniversalTab = universal(({ tab }) => import(`./${tab}`), {
+  minDelay: 750
+});
 
 export default class App extends React.Component {
   constructor(props) {
@@ -13,9 +14,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        { this.state.selected === 'Home' && <HomeTab /> }
-        { this.state.selected === 'Foo' && <FooTab /> }
-        { this.state.selected === 'Bar' && <BarTab /> }
+        <UniversalTab tab={ this.state.selected } />
 
         <button onClick={ () => this.setState({ selected:'Home' }) }>Home</button>
         <button onClick={ () => this.setState({ selected:'Foo' }) }>Foo</button>
